@@ -1,4 +1,4 @@
-# STE_JU2003_OF_files
+# STE_JU2003_R_files
 Date: 2017/08/27  
 Release: IOP9-R2  
 No. of receptors: 7  
