@@ -1,23 +1,26 @@
-### Load and calculate the parameters used in JAGS
-### both for measured data and synthetic data
-### for LesSTE TPU211_3.3M, ground source, 10 sensors
-### date: 2017-05-01
+############## Parameter loader ###############
+### Load and calculate the parameters       ###
+### used in JAGS                            ###
+### This is a 3-d version                   ###
+### Date: 2017-08-31                        ###
+### By: xf                                  ###
+###############################################
 
-library(tmvtnorm)
-library(R2WinBUGS)
-library(coda)
-library(R2jags)
-library(data.table)
+#library(tmvtnorm)
+#library(R2WinBUGS)
+#library(coda)
+#library(R2jags)
+#library(data.table)
 ## settings
 Sct <- '0.7'
 srrChar <- 'SRR'
 x.center <- 0.5  # reference center x-coord in CFD model
 y.center <- 0.6  # reference center y-coord in CFD model
-Zref <- 0.20  # reference height for wind speed (m)
+Zref <- 45  # reference height for wind speed (m)
 
-Uref <- 4.2  # reference wind speed (m/s)
+Uref <- 7.41  # reference wind speed (m/s)
 
-Href <- 0.20  # reference length (m)
+Href <- 1.0  # reference length (m)
 
 norm.fac <- Uref * Zref^2  # normalization factor
 # norm.fac <- 1.0
