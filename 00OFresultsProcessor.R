@@ -1,116 +1,96 @@
 ########### OF results processor ##############
-### Read .raw file from OF sample surfaces  ###
+### Read .dat file from OF sample sets      ###
 ### Write MESHX(Y&Z).TXT and SRR*.TXT       ###
-### Date: 2017-02-27                        ###
+### This is a 3-d version                   ###
+### Date: 2017-08-31                        ###
 ### By: xf                                  ###
 ###############################################
 
-# 对于Ground，缺了个Source的点！！需要手动添加！！
+## header
+library(dplyr)
 
 ## settings ##
-M <- 10  # number of sensors
-xlim <- c(0.2, 0.8)
-ylim <- c(0.3, 0.9)
+M <- 7  # number of sensors
+setsName <- 'samplePoints'
+fieldNames <- c('T',sprintf('Tr%02d',1:M))
+extention <- '.dat'
 tol <- 2e-5 # tolarance
 digits <- 5  # decimal places of coordinations
-surfaceName <- 'Ground_Surface'
-extention <- '.raw'
-nk <- 1  # this is for 2-d STE
-srrFile <- 'SRR0.7.TXT'
+srrFile <- 'SRR.dat' # source-receptor relationship output
 
-## parameters calculation ##
-iM <- 1:M
-iM.char <- sprintf('%02d', iM)
-
-## read .raw file
-for (i in 1:M){
-        inputFile <- paste0('Tr', iM.char[i], '_', surfaceName, extention)
-        tempDF <- read.table(inputFile, skip = 2, header = FALSE)
-        if (i == 1){
-                raw.adjoints <- tempDF$V4
-                raw.x <- tempDF$V1
-                raw.y <- tempDF$V2
-        }
-        else{
-                raw.adjoints <- cbind(raw.adjoints, tempDF$V4)
-        }
-}
-colnames(raw.adjoints) <- paste0('Tr', iM.char)
+## read sample sets file
+inputFile <- paste0(setsName,'_',paste(fieldNames,collapse = '_'),extention)
+inputDF <- read.table(inputFile, skip = 3+M, header = FALSE)
+x <- inputDF[,1]
+y <- inputDF[,2]
+z <- inputDF[,3]
+adjoints <- inputDF[,5:(4+M)]
+colnames(adjoints) <- fieldNames[-1]
 
 ## cell center coords
-raw.xlevels <- as.numeric(names(table(raw.x)))
-raw.ylevels <- as.numeric(names(table(raw.y)))
-for (i in 1:length(raw.xlevels)){
-        if (i == 1){
-                raw.xc <- raw.xlevels[i]
-        }
-        else if (raw.xc[length(raw.xc)] + tol < raw.xlevels[i] |
-                 raw.xc[length(raw.xc)] - tol > raw.xlevels[i]){
-                raw.xc <- rbind(raw.xc, raw.xlevels[i])
-        }
-}
-for (i in 1:length(raw.ylevels)){
-        if (i == 1){
-                raw.yc <- raw.ylevels[i]
-        }
-        else if (raw.yc[length(raw.yc)] + tol < raw.ylevels[i] |
-                 raw.yc[length(raw.yc)] - tol > raw.ylevels[i]){
-                raw.yc <- rbind(raw.yc, raw.ylevels[i])
-        }
-}
+xc <- as.numeric(names(table(x)))
+yc <- as.numeric(names(table(y)))
+zc <- as.numeric(names(table(z)))
+ni <- length(xc)
+nj <- length(yc)
+nk <- length(zc)
 
 ## cell size & cell boundary coords
-raw.dx <- vector(length = length(raw.xc))
-raw.dy <- vector(length = length(raw.yc))
-raw.meshx <- vector('numeric', length = length(raw.xc) + 1)
-raw.meshy <- vector('numeric', length = length(raw.yc) + 1)
-for (i in 1:length(raw.xc)){
-        raw.dx[i] <- 2 * (raw.xc[i] - raw.meshx[i])
-        raw.meshx[i+1] <- raw.xc[i] + 0.5 * raw.dx[i]
+dx <- vector(length = length(xc))
+dy <- vector(length = length(yc))
+dz <- vector(length = length(zc))
+meshx <- vector('numeric', length = length(xc) + 1)
+meshy <- vector('numeric', length = length(yc) + 1)
+meshz <- vector('numeric', length = length(zc) + 1)
+
+# meshx第一个数的设置，只能手动给定第一个网格宽度了。。
+meshx[1] <- xc[1] - 0.5 * (xc[2]-x[1])
+for (i in 1:length(xc)){
+        dx[i] <- 2 * (xc[i] - meshx[i])
+        meshx[i+1] <- xc[i] + 0.5 * dx[i]
 }
-for (i in 1:length(raw.yc)){
-        raw.dy[i] <- 2 * (raw.yc[i] - raw.meshy[i])
-        raw.meshy[i+1] <- raw.yc[i] + 0.5 * raw.dy[i]
+meshy[1] <- yc[1] - 0.5 * (yc[2]-yc[1])
+for (i in 1:length(yc)){
+        dy[i] <- 2 * (yc[i] - meshy[i])
+        meshy[i+1] <- yc[i] + 0.5 * dy[i]
 }
-
-## possible region (based on cell center coords)
-ix.region <- which(raw.xc >= xlim[1] & raw.xc <= xlim[2])
-iy.region <- which(raw.yc >= ylim[1] & raw.yc <= ylim[2])
-ni <- length(ix.region)
-nj <- length(iy.region)
-
-## meshx and meshy: calculate and output
-meshx <- raw.meshx[c(ix.region, ix.region[length(ix.region)]+1)]
-meshy <- raw.meshy[c(iy.region, iy.region[length(iy.region)]+1)]
-meshx <- round(meshx, digits)
-meshy <- round(meshy, digits)
-write.table(meshx, 'MESHX.TXT', col.names = 'X', row.names = FALSE)
-write.table(meshy, 'MESHY.TXT', col.names = 'Y', row.names = FALSE)
-
-## make SRR
-adjoints <- matrix(0, nrow = ni*nj, ncol = M)
-xc <- raw.xc[ix.region]
-yc <- raw.yc[iy.region]
-for (i in 1:ni){
-for (j in 1:nj){
-        l <- which(raw.x < xc[i] + tol & raw.x > xc[i] - tol &
-                   raw.y < yc[j] + tol & raw.y > yc[j] - tol)
-        if (length(l) > 0){
-                adjoints[(i-1)*nj+j,] <- raw.adjoints[l,]
+if (nk == 1){
+        meshz <- c(zc - 1, zc + 1)
+}else{
+        meshz[1] <- zc[1] - 0.5 * (zc[2]-zc[1])
+        for (i in 1:length(zc)){
+        dz[i] <- 2 * (zc[i] - meshz[i])
+        meshz[i+1] <- zc[i] + 0.5 * dz[i]
         }
 }
-}
-## for TPU211_3.3M, RANS
-#i=87 #for xmin=0.0
-i=68 #for xmin=0.2
-j=55
-ij=(i-1)*nj+j
-adjoints[ij,]=c(38.545262, 70.228292, 25.730482, 26.105905, 30.431934, 18.391142, 70.215365, 25.734202, 30.442659, 18.396392)
-################
 
-SRR <- as.vector(adjoints)
+
+
+## meshx, y, z: round and output
+meshx <- round(meshx, digits)
+meshy <- round(meshy, digits)
+meshz <- round(meshz, digits)
+write.table(meshx, 'meshx.dat', col.names = 'X', row.names = FALSE)
+write.table(meshy, 'meshy.dat', col.names = 'Y', row.names = FALSE)
+write.table(meshz, 'meshz.dat', col.names = 'Z', row.names = FALSE)
+
+## make source-receptor relationship
+SRR <- as.data.frame(matrix(0, nrow = ni*nj*nk, ncol = M))
+N.input <- length(x)
+clock <- progress_estimated(N.input)
+li <- vector(length = N.input)
+lj <- vector(length = N.input)
+lk <- vector(length = N.input)
+for (l in 1:length(x)){
+        li[l] <- which(xc == x[l])
+        lj[l] <- which(yc == y[l])
+        lk[l] <- which(zc == z[l])
+        clock$tick()$print()
+}
+SRR[(lk-1)*ni*nj+(li-1)*nj+lj,] <- adjoints
+colnames(SRR) <- fieldNames[-1]
 
 ## output SRR.TXT
 write.table(t(c('NSEN=','I=','J=','K=')), srrFile, col.names = FALSE, row.names = FALSE)
 write.table(t(c(M, ni, nj, nk)), srrFile, col.names = FALSE, row.names = FALSE, append = TRUE)
-write.table(SRR, srrFile, col.names = FALSE, row.names = FALSE, append = TRUE)
+write.table(SRR, srrFile, col.names = TRUE, row.names = FALSE, append = TRUE)
