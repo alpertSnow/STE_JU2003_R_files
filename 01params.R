@@ -6,16 +6,16 @@
 ### By: xf                                  ###
 ###############################################
 
-#library(tmvtnorm)
-#library(R2WinBUGS)
-#library(coda)
-#library(R2jags)
-#library(data.table)
+library(tmvtnorm)
+library(R2WinBUGS)
+library(coda)
+library(R2jags)
+library(data.table)
 ## settings
 Sct <- '0.7'
 srrChar <- 'SRR'
-x.center <- 0.5  # reference center x-coord in CFD model
-y.center <- 0.6  # reference center y-coord in CFD model
+x.center <- 0  # reference center x-coord in CFD model
+y.center <- 0  # reference center y-coord in CFD model
 Zref <- 45  # reference height for wind speed (m)
 
 Uref <- 7.41  # reference wind speed (m/s)
@@ -25,20 +25,19 @@ Href <- 1.0  # reference length (m)
 norm.fac <- Uref * Zref^2  # normalization factor
 # norm.fac <- 1.0
 
-header <- as.vector(data.matrix(read.table(paste0(srrChar,Sct,'.TXT'), nrows = 1, skip = 1)))
+header <- as.vector(data.matrix(read.table(paste0(srrChar,'.dat'), nrows = 1, skip = 1)))
 M <- header[1]
 ni <- header[2]
 nj <- header[3]
 nk <- header[4]
 N <- ni * nj * nk
-H <- array(0, dim = c(M, N))
 
-srr.file <- paste0(srrChar,Sct,'.TXT')
-SRR <- as.vector(data.matrix(fread(srr.file, skip = 2)))
-H[,] <- t(matrix(SRR, nrow= N, ncol = M))  # Source-receptor matrix for the i-th Sct value
+srr.file <- paste0(srrChar,'.dat')
+SRR <- fread(srr.file, skip = 2)
+H <- t(data.matrix(SRR))  # Source-receptor matrix for the i-th Sct value
 
 ### measured data
-r.info <- data.matrix(fread('RINFO.TXT', nrows = M, skip = 1))
+r.info <- data.matrix(fread('rInfo.dat', nrows = M, skip = 1))
 mu <- r.info[,4]/norm.fac # Measurement vector, M
 #R <- pmax((mu), 10) # Measuremnet covariance vector, M
 R <- (r.info[,5]/norm.fac)^2/4
@@ -59,9 +58,9 @@ q.real <- 1.0
 
 ## cell info
 ## cell center (xc, yc, xz) and cell width (dx, dy dz) calculation
-meshx <- as.vector(as.matrix(fread('MESHX.txt', header = TRUE)))
-meshy <- as.vector(as.matrix(fread('MESHY.txt', header = TRUE)))
-meshz <- as.vector(as.matrix(fread('MESHZ.txt', header = TRUE)))
+meshx <- as.vector(as.matrix(fread('MESHX.dat', header = TRUE)))
+meshy <- as.vector(as.matrix(fread('MESHY.dat', header = TRUE)))
+meshz <- as.vector(as.matrix(fread('MESHZ.dat', header = TRUE)))
 meshx <- (meshx-x.center)/Href
 meshy <- (meshy-y.center)/Href
 xc <- vector(length = ni)
