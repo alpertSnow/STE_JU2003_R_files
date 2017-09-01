@@ -87,7 +87,7 @@ for (l in 1:length(x)){
         lk[l] <- which(zc == z[l])
         clock$tick()$print()
 }
-SRR[(lk-1)*ni*nj+(li-1)*nj+lj,] <- adjoints
+SRR[(lk-1)*ni*nj+(lj-1)*ni+li,] <- adjoints
 colnames(SRR) <- fieldNames[-1]
 
 ## output SRR.TXT
