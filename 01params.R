@@ -58,9 +58,9 @@ q.real <- 1.0
 
 ## cell info
 ## cell center (xc, yc, xz) and cell width (dx, dy dz) calculation
-meshx <- as.vector(as.matrix(fread('MESHX.dat', header = TRUE)))
-meshy <- as.vector(as.matrix(fread('MESHY.dat', header = TRUE)))
-meshz <- as.vector(as.matrix(fread('MESHZ.dat', header = TRUE)))
+meshx <- as.vector(as.matrix(fread('meshx.dat', header = TRUE)))
+meshy <- as.vector(as.matrix(fread('meshy.dat', header = TRUE)))
+meshz <- as.vector(as.matrix(fread('meshz.dat', header = TRUE)))
 meshx <- (meshx-x.center)/Href
 meshy <- (meshy-y.center)/Href
 xc <- vector(length = ni)
