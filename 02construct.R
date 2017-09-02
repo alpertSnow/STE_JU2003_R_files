@@ -15,7 +15,7 @@ sf <- function(){
                 a[m] <- H[m, ijk]
                 c[m] <- a[m] * q
                 mu[m] ~ dnorm(c[m], tau[m])
-                mu[m] ~ dt(c[m],tau[m],2)
+                # mu[m] ~ dt(c[m],tau[m],2)
         }
         # prior
         # location prior
