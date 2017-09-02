@@ -5,7 +5,6 @@ model
         a[m] <- H[m, ijk]
         c[m] <- a[m] * q
         mu[m] ~ dnorm(c[m], tau[m])
-        mu[m] ~ dt(c[m], tau[m], 2)
     }
     Mk ~ dcat(pk[])
     k <- kCat[Mk]
