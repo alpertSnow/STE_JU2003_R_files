@@ -13,9 +13,10 @@ library(R2jags)
 library(data.table)
 ## settings
 Sct <- '0.7'
-srrChar <- 'SRR'
-x.center <- 0  # reference center x-coord in CFD model
-y.center <- 0  # reference center y-coord in CFD model
+srr.file <- 'SRR.dat'
+x.center <- 0  # reference center coord in CFD model
+y.center <- 0 
+z.center <- 0 
 Zref <- 45  # reference height for wind speed (m)
 
 Uref <- 7.41  # reference wind speed (m/s)
@@ -25,14 +26,13 @@ Href <- 1.0  # reference length (m)
 norm.fac <- Uref * Zref^2  # normalization factor
 # norm.fac <- 1.0
 
-header <- as.vector(data.matrix(read.table(paste0(srrChar,'.dat'), nrows = 1, skip = 1)))
+header <- as.vector(data.matrix(read.table(srr.file, nrows = 1, skip = 1)))
 M <- header[1]
 ni <- header[2]
 nj <- header[3]
 nk <- header[4]
 N <- ni * nj * nk
 
-srr.file <- paste0(srrChar,'.dat')
 SRR <- fread(srr.file, skip = 2)
 H <- t(data.matrix(SRR))  # Source-receptor matrix for the i-th Sct value
 
@@ -63,6 +63,7 @@ meshy <- as.vector(as.matrix(fread('meshy.dat', header = TRUE)))
 meshz <- as.vector(as.matrix(fread('meshz.dat', header = TRUE)))
 meshx <- (meshx-x.center)/Href
 meshy <- (meshy-y.center)/Href
+meshz <- (meshz-z.center)/Href
 xc <- vector(length = ni)
 dx <- vector(length = ni)
 for(i in 1:ni){
@@ -75,15 +76,23 @@ for(j in 1:nj){
         yc[j] <- (meshy[j]+meshy[j+1])/2
         dy[j] <- meshy[j+1]-meshy[j]
 }
-
+zc <- vector(length = nk)
+dz <- vector(length = nk)
+for(k in 1:nk){
+        zc[k] <- (meshz[k]+meshy[k+1])/2
+        dz[k] <- meshz[k+1]-meshy[k]
+}
 ## location prior distribution, decomposed into one 1d distribution and a 2d distribution (pi -> pij).
-pMat.01 <- matrix(as.numeric(apply(H[,], 2, sum) != 0), nrow = nj, ncol = ni) # 0 if it is impossible to have a prior
-pMat <- pMat.01  * (dy %*% t(dx))
-pi <- apply(pMat, 2, sum)/sum(apply(pMat, 2, sum))
-pij <- apply(pMat, 2, function(x) x/sum(x))  # prior of j after i is chosen from pi
+pArray.01 <- array(as.numeric(apply(H[,], 2, sum) != 0), c(ni, nj, nk)) # 0 if it is impossible to have a prior
+pArray <- pArray.01 * (dx %o% dy %o% dz)
+# search sequence: kji
+pk <- apply(pArray, 3, sum)
+pjk <- apply(pArray, 3, function(x) apply(x, 2, sum))
+pijk <- pArray
+
 iCat <- 1:ni
 jCat <- 1:nj
-
+kCat <- 1:nk
 ## emission rate q prior
 logqUpper <- 2 # uper limit: 10^x
 logqLower <- -2 # lower limit: 10^x
