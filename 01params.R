@@ -40,7 +40,7 @@ H <- t(data.matrix(SRR))  # Source-receptor matrix for the i-th Sct value
 r.info <- data.matrix(fread('rInfo.dat', nrows = M, skip = 1))
 mu <- r.info[,4]/norm.fac # Measurement vector, M
 #R <- pmax((mu), 10) # Measuremnet covariance vector, M
-R <- (r.info[,5]/norm.fac)^2/4
+R <- (r.info[,5]/norm.fac)^2
 #R <- rep(3,M)
 tau <- 1/R # tau vector, M
 
@@ -88,7 +88,7 @@ pArray <- pArray.01 * (dx %o% dy %o% dz)
 # search sequence: kji
 pk <- apply(pArray, 3, sum)
 pjk <- apply(pArray, 3, function(x) apply(x, 2, sum))
-pijk <- pArray
+pijk <- matrix(pArray, nrow = ni, ncol = nj*nk)
 
 iCat <- 1:ni
 jCat <- 1:nj
