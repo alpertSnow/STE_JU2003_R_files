@@ -5,6 +5,7 @@ model
         a[m] <- H[m, ijk]
         c[m] <- a[m] * q
         mu[m] ~ dnorm(c[m], tau[m])
+        mu[m] ~ dt(c[m], tau[m], 2)
     }
     Mk ~ dcat(pk[])
     k <- kCat[Mk]
@@ -12,7 +13,7 @@ model
     Mj ~ dcat(pjk[1:nj, k])
     j <- jCat[Mj]
     y <- yc[j]
-    Mi <- dcat(pijk[1:ni, j, k])
+    Mi ~ dcat(pijk[1:ni, (k - 1) * nj + j])
     i <- iCat[Mi]
     x <- xc[i]
     log.q ~ dunif(logqLower, logqUpper)
