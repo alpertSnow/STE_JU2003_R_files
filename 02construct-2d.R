@@ -35,5 +35,5 @@ sf <- function(){
         q <- 10^log.q
         #q ~ dunif(0,100)
 }
-sf.path <- file.path(getwd(), "sf.bug")
+sf.path <- file.path(getwd(), "STE2d.bug")
 write.model(sf, sf.path)
