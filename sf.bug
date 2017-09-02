@@ -1,17 +1,20 @@
 model
 {
-    ij <- (i - 1) * nj + j
+    ijk <- (k - 1) * ni * nj + (j - 1) * ni + i
     for (m in 1:M) {
-        a[m] <- H[m, ij]
+        a[m] <- H[m, ijk]
         c[m] <- a[m] * q
         mu[m] ~ dnorm(c[m], tau[m])
     }
-    Mi ~ dcat(pi[])
+    Mk ~ dcat(pk[])
+    k <- kCat[Mk]
+    z <- zc[k]
+    Mj ~ dcat(pjk[1:nj, k])
+    j <- jCat[Mj]
+    y <- yc[j]
+    Mi <- dcat(pijk[1:ni, j, k])
     i <- iCat[Mi]
     x <- xc[i]
-    Mij ~ dcat(pij[1:nj, i])
-    j <- jCat[Mij]
-    y <- yc[j]
     log.q ~ dunif(logqLower, logqUpper)
     q <- 10^log.q
 }
