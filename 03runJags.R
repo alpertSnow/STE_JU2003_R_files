@@ -1,6 +1,10 @@
-### Source finder: run using R2jags
-### with dcat prior of location
-### date: 2016-09-20
+############# Bayesian inference ##############
+### run STE using R2jags                    ###
+### with dcat prior of location             ###
+### This is a 3-d version                   ###
+### Date: 2017-09-02                        ###
+### By: xf                                  ###
+###############################################
 
 library(R2jags)
 library(coda)
@@ -12,7 +16,7 @@ parameters <- c('i','j', 'k','q','x','y', 'z')
 inits <- NULL
 #inits <- function() {list(icon = 26, jcon = 31, q = 60)}
 
-sf.sim <- jags(data, inits, parameters, "sf.bug",n.chains=3,n.iter=50000,n.burnin=5000,n.thin=1)
+sf.sim <- jags.parallel(data, inits, parameters, "sf.bug",n.chains=3,n.iter=2000,n.burnin=1000,n.thin=1)
 
 
 sf.coda <- as.mcmc(sf.sim)
