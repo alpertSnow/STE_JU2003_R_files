@@ -33,6 +33,11 @@ nj <- header[3]
 nk <- header[4]
 N <- ni * nj * nk
 
+# check if it is a 2-d case
+if (nk == 1){
+        stop('This is a two-dimenssional case!')
+}
+
 SRR <- fread(srr.file, skip = 2)
 H <- t(data.matrix(SRR))  # Source-receptor matrix for the i-th Sct value
 

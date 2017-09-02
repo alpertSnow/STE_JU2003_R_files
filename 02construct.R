@@ -8,6 +8,12 @@
 ###############################################
 library(R2WinBUGS)
 library(coda)
+
+# check if it is a 2-d case
+if (nk == 1){
+        stop('This is a two-dimenssional case!')
+}
+
 sf <- function(){
         # likelihood
         ijk <- (k-1)*ni*nj + (j-1)*ni + i    # grid location
@@ -33,5 +39,5 @@ sf <- function(){
         q <- 10^log.q
         #q ~ dunif(0,100)
 }
-sf.path <- file.path(getwd(), "sf.bug")
+sf.path <- file.path(getwd(), "STE3d.bug")
 write.model(sf, sf.path)
