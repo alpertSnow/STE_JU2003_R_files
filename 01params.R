@@ -42,7 +42,7 @@ SRR <- fread(srr.file, skip = 2)
 H <- t(data.matrix(SRR))  # Source-receptor matrix for the i-th Sct value
 
 ### measured data
-r.info <- data.matrix(fread('rInfo.dat', nrows = M, skip = 1))
+r.info <- data.matrix(fread('receptor.dat', nrows = M, skip = 1))
 mu <- r.info[,4]/norm.fac # Measurement vector, M
 #R <- pmax((mu), 10) # Measuremnet covariance vector, M
 R <- (r.info[,5]/norm.fac)^2

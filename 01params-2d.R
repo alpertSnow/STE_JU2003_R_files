@@ -39,26 +39,25 @@ if (nk != 1){
 }
 
 SRR <- fread(srr.file, skip = 2)
-H <- t(data.matrix(SRR))  # Source-receptor matrix for the i-th Sct value
+H <- t(data.matrix(SRR))*1e6  # Source-receptor matrix
 
 ### measured data
-r.info <- data.matrix(fread('rInfo.dat', nrows = M, skip = 1))
-mu <- r.info[,4]/norm.fac # Measurement vector, M
-#R <- pmax((mu), 10) # Measuremnet covariance vector, M
-R <- (r.info[,5]/norm.fac)^2
-#R <- rep(3,M)
+receptorData <- fread('receptor.dat')
+receptorData[, mu := mean(duration*c)/mean(duration), by = locNo]
+mu.original <- unique(receptorData[,list(locNo,mu)])$mu
+mu <- mu.original # Measurement vector, M
+R <- (mu/10)^2 # Measuremnet covariance vector, M
 tau <- 1/R # tau vector, M
 
 ### Synthetic data
-#i.real <- 87 #for xmin=0.0
-i.real <- 68 #for xmin=0.2
-j.real <- 55
-ij.real <- (i.real-1)*nj + j.real # source location
+i.real <- 186 #for xmin=0.0
+j.real <- 274 #for xmin=0.2
+ij.real <- (j.real-1)*ni + i.real # source location
 q.real <- 1.0
 #sig.rate <- 0.5 # sigma/mu
-#mu <- H[1, ,ij.real] * q.real
+mu <- H[ ,ij.real] * q.real
 #mu <- as.vector(mu + rtmvnorm(1, rep(0,M), diag(mu * sig.rate)))
-#R <- (mu * sig.rate)^2
+#R <- rep(1000,M)^2
 #tau <- 1/R
 
 ## cell info
