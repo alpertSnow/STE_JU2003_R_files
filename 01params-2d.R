@@ -51,14 +51,14 @@ tau <- 1/R # tau vector, M
 
 ### Synthetic data
 i.real <- 186 #for xmin=0.0
-j.real <- 274 #for xmin=0.2
+j.real <- 324 #for xmin=0.2
 ij.real <- (j.real-1)*ni + i.real # source location
 q.real <- 1.0
 #sig.rate <- 0.5 # sigma/mu
 mu <- H[ ,ij.real] * q.real
 #mu <- as.vector(mu + rtmvnorm(1, rep(0,M), diag(mu * sig.rate)))
-#R <- rep(1000,M)^2
-#tau <- 1/R
+R <- (mu/10)^2
+tau <- 1/R
 
 ## cell info
 ## cell center (xc, yc, xz) and cell width (dx, dy dz) calculation
