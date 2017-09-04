@@ -35,9 +35,9 @@ sf <- function(){
         i <- iCat[Mi]
         x <- xc[i]
         #
-        log.q ~ dunif(logqLower, logqUpper)
-        q <- 10^log.q
-        #q ~ dunif(0,100)
+        #log.q ~ dunif(logqLower, logqUpper)
+        #q <- 10^log.q
+        q ~ dunif(0,100)
 }
 sf.path <- file.path(getwd(), "STE3d.bug")
 write.model(sf, sf.path)
