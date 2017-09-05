@@ -6,10 +6,10 @@
 ### By: xf                                  ###
 ###############################################
 
-library(tmvtnorm)
-library(R2WinBUGS)
-library(coda)
-library(R2jags)
+#library(tmvtnorm)
+#library(R2WinBUGS)
+#library(coda)
+#library(R2jags)
 library(data.table)
 ## settings
 Sct <- '0.7'
@@ -46,7 +46,7 @@ receptorData <- fread('receptor.dat')
 receptorData[, mu := mean(duration*c)/mean(duration), by = locNo]
 mu.original <- unique(receptorData[,list(locNo,mu)])$mu
 mu <- mu.original # Measurement vector, M
-R <- (mu/10)^2 # Measuremnet covariance vector, M
+R <- (mu/4)^2 # Measuremnet covariance vector, M
 tau <- 1/R # tau vector, M
 
 ### Synthetic data
@@ -55,10 +55,10 @@ j.real <- 324 #for xmin=0.2
 ij.real <- (j.real-1)*ni + i.real # source location
 q.real <- 1.0
 #sig.rate <- 0.5 # sigma/mu
-mu <- H[ ,ij.real] * q.real
+#mu <- H[ ,ij.real] * q.real
 #mu <- as.vector(mu + rtmvnorm(1, rep(0,M), diag(mu * sig.rate)))
-R <- (mu/10)^2
-tau <- 1/R
+#R <- (mu/10)^2
+#tau <- 1/R
 
 ## cell info
 ## cell center (xc, yc, xz) and cell width (dx, dy dz) calculation
