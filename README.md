@@ -1,14 +1,14 @@
 # STE_JU2003_R_files
-Date: 2017/08/27  
+Date: 2017/11/23 
 Release: IOP9-R2  
-No. of receptors: 7  
+No. of receptors: 44 
 ***
 ## Experiment info
 ### Met
-Station name: M01, St. Anthony’s Hospital, N 10th and Dewey  
-Location: (633954,3927040,45)  
-Wind direction: 182.33 ± 11.62 degree  
-Wind speed: 7.41 m/s  
+Station name: PWIDS15  
+Location: 
+Wind direction: 168 degree  
+Wind speed: 6.13 m/s at 30 m
 ### Release
 Site name: Park  
 Location: (634686,3926036,0)  
@@ -25,32 +25,29 @@ No. Easting Northing height
 7. 094 634603,3926632,0,  
 ***
 ## CFD airflow info
-Turbulence model: SKE
+Turbulence model: realizableKE
 Solver: simpleFoam
 Building model: center blocks (2,2)
 ### Location mapping 
 > (UTM E, UTM N) -> CFD location (x,y):  
-> (634614.498,3925939.808) -> (500,550)  
+> (634614.498,3925939.808) -> (1900,1400)  
 ### Computational domain:
-(1050,1350,200)  
+(4096,4096,1024)  
 ### Mesh info
-Total No.: 4067283, unstructured  
-Min size: (2,2,2)  
-snappyHexMesh: castellatedMesh T; snap T; addLayers F;
-refinmentBox: min (200,0,0) max (850,900,50)  
+Total No.: 900w+, unstructured  
+Min size: (1, 1, 0.5)  
+made by Star-CCM+
 ### B.C.
-Wind direction: 180 degree  
+Wind direction: 168 degree  
 Wind profile: power law, alpha = 0.25  
 Ground: nutkWallFunction  
 ### Other settings
 Sc_t = 0.7  
-Discretization: 1st order upwind  
+Discretization: 2nd order limitedLinear
 ### adjoint info
 sourceProperties made by sourcePropertiesMaker.R  
 ***
 ## STE info
 ### Potential source region
-    x <- seq(201,849,2)  
-    y <- seq(1,899,2)  
-    z <- seq(1,1,1)  
+1000*750 2d, 2m interval
 Run by sampleDictMaker.R  
