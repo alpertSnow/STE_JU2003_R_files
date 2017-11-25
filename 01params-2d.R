@@ -13,13 +13,13 @@ library(R2jags)
 library(data.table)
 ## settings
 Sct <- '0.7'
-srr.file <- 'SRR.dat'
+srr.file <- 'SRR174-2.dat'
 x.center <- 0  # reference center coord in CFD model
 y.center <- 0 
 z.center <- 0 
-Zref <- 45  # reference height for wind speed (m)
+Zref <- 30  # reference height for wind speed (m)
 
-Uref <- 7.41  # reference wind speed (m/s)
+Uref <- 6.13  # reference wind speed (m/s)
 
 Href <- 1.0  # reference length (m)
 
@@ -43,10 +43,9 @@ H <- t(data.matrix(SRR))*1e6  # Source-receptor matrix
 
 ### measured data
 receptorData <- fread('receptor.dat')
-receptorData[, mu := mean(duration*c)/mean(duration), by = locNo]
-mu.original <- unique(receptorData[,list(locNo,mu)])$mu
+mu.original <- receptorData$concentration
 mu <- mu.original # Measurement vector, M
-R <- (mu/10)^2 # Measuremnet covariance vector, M
+R <- (mu)^2 # Measuremnet covariance vector, M
 tau <- 1/R # tau vector, M
 
 ### Synthetic data
@@ -55,10 +54,10 @@ j.real <- 324 #for xmin=0.2
 ij.real <- (j.real-1)*ni + i.real # source location
 q.real <- 1.0
 #sig.rate <- 0.5 # sigma/mu
-mu <- H[ ,ij.real] * q.real
+#mu <- H[ ,ij.real] * q.real
 #mu <- as.vector(mu + rtmvnorm(1, rep(0,M), diag(mu * sig.rate)))
-R <- (mu/10)^2
-tau <- 1/R
+#R <- (mu/10)^2
+#tau <- 1/R
 
 ## cell info
 ## cell center (xc, yc, xz) and cell width (dx, dy dz) calculation
