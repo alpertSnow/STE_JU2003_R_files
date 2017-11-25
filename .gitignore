@@ -24,4 +24,4 @@ vignettes/*.pdf
 *.knit.md
 .Rproj.user
 *.bug
-
+samplePoints_T_Tr44*.dat
