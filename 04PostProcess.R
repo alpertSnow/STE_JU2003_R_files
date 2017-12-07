@@ -14,11 +14,11 @@ q.est <- mean(mcmc$q)
 mu.mcmc <- matrix(nrow = M, ncol = nrow(mcmc))
 for (k in 1:nrow(mcmc)) {
         #mu.mcmc[,k] <- H[, ,as.integer((mcmc[k,]$i-1)*nj+mcmc[k,]$j)]*mcmc[k,]$q
-        mu.mcmc[,k] <- H[ ,as.integer((mcmc[k,]$i-1)*nj+mcmc[k,]$j)]*mcmc[k,]$q
+        mu.mcmc[,k] <- H[ ,as.integer((mcmc[k,]$j-1)*ni+mcmc[k,]$i)]*mcmc[k,]$q
 }
 mu.est <- rowMeans(mu.mcmc)
 mu.obs <- mu
-mu.pre <- H[,(i.real-1)*nj+j.real]*q.real
+mu.pre <- H[,(j.real-1)*ni+i.real]*q.real
 
 plot(mu, type= 'l')
 lines(mu.est, lty = 2, col = 'red')
