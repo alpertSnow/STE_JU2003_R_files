@@ -13,7 +13,7 @@ library(R2jags)
 library(data.table)
 ## settings
 Sct <- '0.7'
-srr.file <- 'SRR168.dat'
+srr.file <- 'SRR174-2.dat'
 x.center <- 0  # reference center coord in CFD model
 y.center <- 0 
 z.center <- 0 
@@ -42,10 +42,10 @@ SRR <- fread(srr.file, skip = 2)
 H <- t(data.matrix(SRR))*1e6  # Source-receptor matrix
 
 ### measured data
-receptorData <- fread('receptor.dat')
+receptorData <- fread('receptor-origin.dat')
 mu.original <- receptorData$concentration
 mu <- mu.original # Measurement vector, M
-R <- pmax((mu/2)^2, 10) # Measuremnet covariance vector, M
+R <- pmax((mu/2)^2, 100) # Measuremnet covariance vector, M
 tau <- 1/R # tau vector, M
 
 ### Synthetic data
