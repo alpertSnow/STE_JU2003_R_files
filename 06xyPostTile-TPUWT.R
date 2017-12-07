@@ -1,5 +1,6 @@
 ### contour plots of location marginal, using ggplot2
 ### date: 2017-05-01
+library(ggplot2)
 library(RColorBrewer)
 ### reshape data
 m.HPD <- melt(HPD)
