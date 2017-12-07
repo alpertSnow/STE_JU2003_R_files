@@ -45,12 +45,12 @@ H <- t(data.matrix(SRR))*1e6  # Source-receptor matrix
 receptorData <- fread('receptor.dat')
 mu.original <- receptorData$concentration
 mu <- mu.original # Measurement vector, M
-R <- (mu)^2 # Measuremnet covariance vector, M
+R <- (mu/2)^2 # Measuremnet covariance vector, M
 tau <- 1/R # tau vector, M
 
 ### Synthetic data
-i.real <- 186 #for xmin=0.0
-j.real <- 324 #for xmin=0.2
+i.real <- 255 #for xmin=0.0
+j.real <- 129 #for xmin=0.2
 ij.real <- (j.real-1)*ni + i.real # source location
 q.real <- 1.0
 #sig.rate <- 0.5 # sigma/mu
@@ -95,5 +95,5 @@ pij <- matrix(pArray, nrow = ni, ncol = nj)
 iCat <- 1:ni
 jCat <- 1:nj
 ## emission rate q prior
-logqUpper <- 2 # uper limit: 10^x
-logqLower <- -2 # lower limit: 10^x
+logqUpper <- 3 # uper limit: 10^x
+logqLower <- 0 # lower limit: 10^x
