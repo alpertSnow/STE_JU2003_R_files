@@ -78,9 +78,17 @@ xy.mesh <- mesh(x.block, y.block)
 x.mesh <- as.vector(xy.mesh$x)
 y.mesh <- as.vector(xy.mesh$y)
 
+
+xv <- rep(xc, times = nj)
+yv <- rep(yc, each = ni)
+w <- rep(dx, times = nj)
+h <- rep(dy, each = ni)
+m.prob <- melt(probMat)/w/h
+
 ## output 3-column csv
 HPD_DF <- data.frame(x=xv,y=yv,value=m.HPD$value)
 write.csv(HPD_DF,'RANS_HPD.csv', row.names = FALSE)
 
 contourDF <- data.frame(x=xv,y=yv,value=m.prob$value)
 write.csv(contourDF,'RANS_contour.csv', row.names = FALSE)
+

@@ -16,11 +16,11 @@ fieldNames <- c('T',sprintf('Tr%02d',1:M))
 extention <- '.dat'
 tol <- 2e-5 # tolarance
 digits <- 5  # decimal places of coordinations
-srrFile <- 'SRR174-2.dat' # source-receptor relationship output
+srrFile <- 'SRR174-CBD.dat' # source-receptor relationship output
 
 ## read sample sets file
 inputFile <- paste0(setsName,'_',paste(fieldNames,collapse = '_'),extention)
-inputFile <- 'samplePoints_T_Tr44-174-2.dat'
+inputFile <- 'samplePoints_T_Tr44-174CBD.dat'
 inputDF <- read.table(inputFile, skip = 3+M, header = FALSE)
 x <- inputDF[,1]
 y <- inputDF[,2]
