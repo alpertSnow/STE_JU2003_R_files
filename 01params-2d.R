@@ -45,14 +45,14 @@ H <- t(data.matrix(SRR))*1e6  # Source-receptor matrix
 receptorData <- fread('receptor-origin.dat')
 mu.original <- receptorData$concentration
 mu <- mu.original # Measurement vector, M
-R <- pmax((mu)^2, 100) # Measuremnet covariance vector, M
+R <- pmax((mu/2)^2, 100) # Measuremnet covariance vector, M
 tau <- 1/R # tau vector, M
 
 ### Synthetic data
 i.real <- 255 #for xmin=0.0
 j.real <- 129 #for xmin=0.2
 ij.real <- (j.real-1)*ni + i.real # source location
-q.real <- 100.0
+q.real <- 333
 #sig.rate <- 0.5 # sigma/mu
 #mu <- H[ ,ij.real] * q.real
 #mu <- as.vector(mu + rtmvnorm(1, rep(0,M), diag(mu * sig.rate)))
